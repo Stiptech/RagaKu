@@ -6,10 +6,9 @@ import {
   TabTriggerSlotProps,
   TabListProps,
 } from 'expo-router/ui';
-import { SymbolView } from 'expo-symbols';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
 
-import { ExternalLink } from './external-link';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
@@ -21,11 +20,17 @@ export default function AppTabs() {
       <TabSlot style={{ height: '100%' }} />
       <TabList asChild>
         <CustomTabList>
-          <TabTrigger name="home" href="/" asChild>
-            <TabButton>Home</TabButton>
+          <TabTrigger name="index" href="/" asChild>
+            <TabButton icon="local_fire_department">Workout</TabButton>
           </TabTrigger>
-          <TabTrigger name="explore" href="/explore" asChild>
-            <TabButton>Explore</TabButton>
+          <TabTrigger name="exercise" href="/exercise" asChild>
+            <TabButton icon="fitness_center">Exercise</TabButton>
+          </TabTrigger>
+          <TabTrigger name="progress" href="/progress" asChild>
+            <TabButton icon="show_chart">Progress</TabButton>
+          </TabTrigger>
+          <TabTrigger name="vip" href="/vip" asChild>
+            <TabButton icon="crown">VIP</TabButton>
           </TabTrigger>
         </CustomTabList>
       </TabList>
@@ -33,43 +38,49 @@ export default function AppTabs() {
   );
 }
 
-export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
+type IconKey = 'local_fire_department' | 'fitness_center' | 'show_chart' | 'crown';
+
+const iconMap: Record<IconKey, React.ComponentProps<typeof MaterialCommunityIcons>['name']> = {
+  local_fire_department: 'fire',
+  fitness_center: 'dumbbell',
+  show_chart: 'chart-line',
+  crown: 'crown',
+};
+
+export function TabButton({
+  children,
+  isFocused,
+  icon,
+  ...props
+}: TabTriggerSlotProps & { icon: IconKey }) {
+  const scheme = useColorScheme();
+  const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+
   return (
-    <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
-      <ThemedView
-        type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
-        style={styles.tabButtonView}>
-        <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
-          {children}
-        </ThemedText>
-      </ThemedView>
+    <Pressable {...props} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}>
+      <MaterialCommunityIcons
+        name={iconMap[icon]}
+        size={18}
+        color={isFocused ? colors.primary : colors.textSecondary}
+      />
+      <ThemedText type="small" themeColor={isFocused ? 'primary' : 'textSecondary'}>
+        {children}
+      </ThemedText>
     </Pressable>
   );
 }
 
 export function CustomTabList(props: TabListProps) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
-
   return (
     <View {...props} style={styles.tabListContainer}>
       <ThemedView type="backgroundElement" style={styles.innerContainer}>
         <ThemedText type="smallBold" style={styles.brandText}>
-          Expo Starter
+          RagaKu
         </ThemedText>
 
         {props.children}
 
-        <ExternalLink href="https://docs.expo.dev" asChild>
-          <Pressable style={styles.externalPressable}>
-            <ThemedText type="link">Docs</ThemedText>
-            <SymbolView
-              tintColor={colors.text}
-              name={{ ios: 'arrow.up.right.square', web: 'link' }}
-              size={12}
-            />
-          </Pressable>
-        </ExternalLink>
+        <Ionicons name="person-circle-outline" size={20} color="#94A3B8" style={styles.profileIcon} />
       </ThemedView>
     </View>
   );
@@ -86,12 +97,12 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.five,
+    paddingHorizontal: Spacing.four,
     borderRadius: Spacing.five,
     flexDirection: 'row',
     alignItems: 'center',
     flexGrow: 1,
-    gap: Spacing.two,
+    gap: Spacing.four,
     maxWidth: MaxContentWidth,
   },
   brandText: {
@@ -100,16 +111,11 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.7,
   },
-  tabButtonView: {
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.three,
-  },
-  externalPressable: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+  tabItem: {
     alignItems: 'center',
-    gap: Spacing.one,
+    gap: 2,
+  },
+  profileIcon: {
     marginLeft: Spacing.three,
   },
 });

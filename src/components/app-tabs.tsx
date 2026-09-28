@@ -10,22 +10,26 @@ export default function AppTabs() {
   return (
     <NativeTabs
       backgroundColor={colors.background}
-      indicatorColor={colors.backgroundElement}
-      labelStyle={{ selected: { color: colors.text } }}>
+      indicatorColor={colors.backgroundSelected}
+      labelStyle={{ selected: { color: colors.primary } }}>
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
-          renderingMode="template"
-        />
+        <NativeTabs.Trigger.Label>Workout</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="flame.fill" md="local_fire_department" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="explore">
-        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
-        />
+      <NativeTabs.Trigger name="exercise">
+        <NativeTabs.Trigger.Label>Exercise</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="figure.strengthtraining.traditional" md="fitness_center" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="progress">
+        <NativeTabs.Trigger.Label>Progress</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="chart.line.uptrend.xyaxis" md="show_chart" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="vip">
+        <NativeTabs.Trigger.Label>VIP</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="crown.fill" md="workspace_premium" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );

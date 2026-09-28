@@ -9,18 +9,28 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: '#0F172A',
+    background: '#F8FAFC',
+    backgroundElement: '#FFFFFF',
+    backgroundSelected: '#E6F5F3',
+    textSecondary: '#64748B',
+    border: '#E2E8F0',
+    primary: '#0D9488',
+    primaryDark: '#027A74',
+    accent: '#06B6D4',
+    warning: '#F97316',
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: '#F8FAFC',
+    background: '#0B1120',
+    backgroundElement: '#161D2E',
+    backgroundSelected: '#1B2A2B',
+    textSecondary: '#94A3B8',
+    border: '#243044',
+    primary: '#14B8A6',
+    primaryDark: '#0D9488',
+    accent: '#22D3EE',
+    warning: '#FB923C',
   },
 } as const;
 
@@ -63,3 +73,22 @@ export const Spacing = {
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
+
+export const CardRadius = 16;
+export const PillRadius = 24;
+
+/** Fixed dark surface for photo/video-style overlay cards, independent of light/dark theme. */
+export const OverlaySurface = '#0F172A';
+
+export const CardShadow = Platform.select({
+  ios: {
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+  },
+  android: {
+    elevation: 2,
+  },
+  default: {},
+});
