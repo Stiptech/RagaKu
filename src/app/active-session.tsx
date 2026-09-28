@@ -56,7 +56,7 @@ export default function ActiveSessionScreen() {
 
   const handleFinishSet = () => {
     if (currentSet >= TOTAL_SETS) {
-      router.replace('/(tabs)');
+      router.replace('/workout');
       return;
     }
     setCurrentSet((value) => value + 1);

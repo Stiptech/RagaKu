@@ -158,7 +158,7 @@ export default function ActivitiesStep() {
           <PillButton
             label="BUAT PROGRAM AI PERSONAL SAYA →"
             disabled={selectedSports.length < 2}
-            onPress={() => router.replace('/(tabs)')}
+            onPress={() => router.replace('/workout')}
           />
           <ThemedText type="small" themeColor="textSecondary" style={styles.footerNote}>
             Enkripsi biometrik & kerahasiaan data terjamin
