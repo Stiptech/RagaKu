@@ -9,17 +9,17 @@ import { Card } from '@/components/ui/card';
 import { LineChart } from '@/components/ui/line-chart';
 import { PillButton } from '@/components/ui/pill-button';
 import { StatTile } from '@/components/ui/stat-tile';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, FontFamily, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 const WEEK_DAYS = [
-  { label: 'SEN', done: true },
-  { label: 'SEL', done: true },
-  { label: 'RAB', done: true },
-  { label: 'KAM', done: false, rest: true },
-  { label: 'JUM', done: true },
-  { label: 'SAB', done: true },
-  { label: 'MIN', done: false, rest: true },
+  { label: 'SEN', done: true, tag: 'Upper' },
+  { label: 'SEL', done: true, tag: 'Lower' },
+  { label: 'RAB', done: true, tag: 'Core' },
+  { label: 'KAM', done: false, rest: true, tag: 'Rest' },
+  { label: 'JUM', done: true, tag: 'Push' },
+  { label: 'SAB', done: true, tag: 'Pull' },
+  { label: 'MIN', done: false, rest: true, tag: 'Rest' },
 ];
 
 export default function ProgressTelemetryScreen() {
@@ -29,11 +29,13 @@ export default function ProgressTelemetryScreen() {
   const baseline = data.weightKg;
   const target = data.targetWeightKg;
   const diff = baseline - target;
-  const current = +(baseline - diff * 0.6).toFixed(1);
+  // Day-28 progress fraction of the baseline→target diff (matches Figma's -4.6kg/6kg demo curve).
+  const DAY28_PROGRESS = 23 / 30;
+  const current = +(baseline - diff * DAY28_PROGRESS).toFixed(1);
   const weightSeries = [
     baseline,
-    +(baseline - diff * 0.22).toFixed(1),
-    +(baseline - diff * 0.4).toFixed(1),
+    +(baseline - diff * DAY28_PROGRESS * (0.22 / 0.6)).toFixed(1),
+    +(baseline - diff * DAY28_PROGRESS * (0.4 / 0.6)).toFixed(1),
     current,
   ];
   const totalLoss = +(baseline - current).toFixed(1);
@@ -45,19 +47,20 @@ export default function ProgressTelemetryScreen() {
           contentContainerStyle={[styles.scrollContent, { paddingBottom: BottomTabInset + Spacing.six }]}
           showsVerticalScrollIndicator={false}>
           <View style={styles.headerRow}>
-            <View>
-              <ThemedText type="small" themeColor="textSecondary" style={styles.eyebrow}>
-                PROGRESS TELEMETRY
-              </ThemedText>
-              <ThemedText type="subtitle" style={styles.title}>
-                Progres & Transformasi
-              </ThemedText>
+            <View style={styles.headerLeft}>
+              <View style={styles.telemetryRow}>
+                <View style={[styles.liveDot, { backgroundColor: theme.primary }]} />
+                <ThemedText type="smallBold" themeColor="primary" style={styles.eyebrow}>
+                  TELEMETRY AKTIF
+                </ThemedText>
+              </View>
+              <ThemedText style={styles.title}>PROGRES & TRANSFORMASI</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
                 Konsistensi 28 hari terakhir
               </ThemedText>
             </View>
-            <View style={[styles.cycleBadge, { backgroundColor: theme.backgroundSelected }]}>
-              <ThemedText type="small" themeColor="primary">
+            <View style={[styles.cycleBadge, { borderColor: theme.warning }]}>
+              <ThemedText type="smallBold" themeColor="warning" style={styles.cycleBadgeText}>
                 Siklus 1 · Bulan ke-1
               </ThemedText>
             </View>
@@ -65,9 +68,14 @@ export default function ProgressTelemetryScreen() {
 
           <View style={[styles.reminderRow, { backgroundColor: '#FFF7ED', borderColor: theme.warning }]}>
             <Ionicons name="alarm" size={16} color={theme.warning} />
-            <ThemedText type="small" themeColor="textSecondary" style={styles.reminderText}>
-              Reminder pengukuran berkala: check-in bobot & lingkar pinggang, 2 hari lagi.
-            </ThemedText>
+            <View style={styles.reminderTextBlock}>
+              <ThemedText type="smallBold" style={styles.reminderTitle}>
+                REMINDER PENGUKURAN BERKALA
+              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Check-in bobot & lingkar pinggang 2 hari lagi.
+              </ThemedText>
+            </View>
             <View style={[styles.soonBadge, { backgroundColor: theme.warning }]}>
               <ThemedText type="small" style={styles.soonBadgeText}>
                 SEGERA
@@ -78,7 +86,7 @@ export default function ProgressTelemetryScreen() {
           <View style={styles.statsRow}>
             <StatTile label="Berat Badan" value={`${current}`} unit="kg" trend={`↓ ${totalLoss} kg`} />
             <StatTile label="Massa Otot" value="+1.2" unit="kg" trend="↑ Hipertrofi" />
-            <StatTile label="Pinggang" value="-5" unit="cm" trend="Defisit" />
+            <StatTile label="Pinggang" value="-5" unit="cm" trend="Defisit" trendPositive={false} />
           </View>
 
           <Card style={styles.section}>
@@ -101,19 +109,19 @@ export default function ProgressTelemetryScreen() {
               targetValue={target}
               height={140}
             />
-            <ThemedText type="small" themeColor="textSecondary">
+            <ThemedText type="smallBold" themeColor="primary">
               Hari 28: {current} kg · Target {target} kg
             </ThemedText>
           </Card>
 
           <Card style={styles.section}>
             <View style={styles.rowBetween}>
-              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
-                KOMPARASI VISUAL ATLET
-              </ThemedText>
-              <ThemedText type="small" themeColor="primary">
-                -3.8% Lemak Tubuh
-              </ThemedText>
+              <ThemedText style={styles.cardTitle}>KOMPARASI VISUAL ATLET</ThemedText>
+              <View style={[styles.onTrackBadge, { backgroundColor: theme.backgroundSelected }]}>
+                <ThemedText type="smallBold" themeColor="primary">
+                  -3.8% Lemak Tubuh
+                </ThemedText>
+              </View>
             </View>
             <View style={styles.compareRow}>
               <View style={styles.compareItem}>
@@ -126,18 +134,20 @@ export default function ProgressTelemetryScreen() {
                 </ThemedText>
               </View>
               <View style={styles.compareItem}>
-                <View style={[styles.comparePhoto, { backgroundColor: theme.backgroundSelected }]}>
+                <View style={[styles.comparePhoto, { backgroundColor: theme.backgroundSelected, borderColor: theme.primary, borderWidth: 1.5 }]}>
                   <Ionicons name="body" size={36} color={theme.primary} />
                 </View>
                 <View style={styles.compareTitleRow}>
-                  <ThemedText type="smallBold">Hari 28</ThemedText>
+                  <ThemedText type="smallBold" themeColor="primary">
+                    Hari 28
+                  </ThemedText>
                   <View style={[styles.tonedBadge, { backgroundColor: theme.primary }]}>
                     <ThemedText type="small" style={styles.tonedBadgeText}>
                       Toned
                     </ThemedText>
                   </View>
                 </View>
-                <ThemedText type="small" themeColor="textSecondary">
+                <ThemedText type="smallBold" themeColor="primary">
                   +1.2kg Massa Otot
                 </ThemedText>
               </View>
@@ -149,7 +159,7 @@ export default function ProgressTelemetryScreen() {
               <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
                 WORKOUT STREAK PEKANAN
               </ThemedText>
-              <ThemedText type="smallBold" themeColor="primary">
+              <ThemedText themeColor="primary" style={styles.streakPercentFont}>
                 100%
               </ThemedText>
             </View>
@@ -164,15 +174,19 @@ export default function ProgressTelemetryScreen() {
                         : { backgroundColor: day.done ? theme.primary : theme.border },
                     ]}>
                     {day.rest ? (
-                      <ThemedText type="small" themeColor="textSecondary">
-                        ·
-                      </ThemedText>
+                      <Ionicons name="moon" size={13} color={theme.textMuted} />
                     ) : (
                       <Ionicons name="checkmark" size={14} color="#FFFFFF" />
                     )}
                   </View>
-                  <ThemedText type="small" themeColor="textSecondary">
+                  <ThemedText type="small" themeColor="textSecondary" style={styles.dayLabel}>
                     {day.label}
+                  </ThemedText>
+                  <ThemedText
+                    type="small"
+                    themeColor={day.rest ? 'textMuted' : 'textSecondary'}
+                    style={styles.dayTag}>
+                    {day.tag}
                   </ThemedText>
                 </View>
               ))}
@@ -182,7 +196,7 @@ export default function ProgressTelemetryScreen() {
             </ThemedText>
           </Card>
 
-          <PillButton label="UNDUH LAPORAN PROGRES PDF" variant="outline" onPress={() => {}} />
+          <PillButton label="UNDUH LAPORAN PROGRES RAGAKU PDF" variant="outline" onPress={() => {}} />
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
@@ -205,18 +219,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
+  headerLeft: {
+    flex: 1,
+    gap: 2,
+  },
+  telemetryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  liveDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
   eyebrow: {
     letterSpacing: 0.6,
-    textTransform: 'uppercase',
+    fontSize: 12,
   },
   title: {
-    fontSize: 24,
-    lineHeight: 28,
+    fontFamily: FontFamily.headingBold,
+    fontSize: 28,
+    lineHeight: 32,
   },
   cycleBadge: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 999,
+    borderWidth: 1,
+  },
+  cycleBadgeText: {
+    fontSize: 12,
   },
   reminderRow: {
     flexDirection: 'row',
@@ -226,8 +259,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
   },
-  reminderText: {
+  reminderTextBlock: {
     flex: 1,
+    gap: 2,
+  },
+  reminderTitle: {
+    fontSize: 12,
   },
   soonBadge: {
     paddingHorizontal: 8,
@@ -247,6 +284,10 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     letterSpacing: 0.4,
+  },
+  cardTitle: {
+    fontFamily: FontFamily.headingBold,
+    fontSize: 18,
   },
   rowBetween: {
     flexDirection: 'row',
@@ -287,13 +328,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 10,
   },
+  streakPercentFont: {
+    fontFamily: FontFamily.headingBold,
+    fontSize: 18,
+  },
   weekRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   dayColumn: {
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
   },
   dayCircle: {
     width: 30,
@@ -301,6 +346,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  dayLabel: {
+    fontSize: 11,
+  },
+  dayTag: {
+    fontSize: 10,
   },
   streakSummary: {
     marginTop: 4,

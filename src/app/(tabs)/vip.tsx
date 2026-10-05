@@ -7,7 +7,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { PillButton } from '@/components/ui/pill-button';
-import { BottomTabInset, CardRadius, MaxContentWidth, OverlaySurface, Spacing } from '@/constants/theme';
+import { BottomTabInset, CardRadius, FontFamily, MaxContentWidth, OverlaySurface, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type PlanKey = 'yearly' | 'monthly';
@@ -20,10 +20,10 @@ const COMPARISON_ROWS = [
     pro: 'RagaKu Pro · Adaptif tiap sesi otomatis',
   },
   {
-    title: 'Live Form Tracking',
-    badge: 'KAMERA HP',
-    free: 'Akun Gratis · Tidak tersedia',
-    pro: 'RagaKu Pro · Koreksi sudut & tempo realtime',
+    title: 'Audit & Kalibrasi Program Harian',
+    badge: 'ADAPTIF KESIAPAN',
+    free: 'Akun Gratis · Program statis mingguan',
+    pro: 'RagaKu Pro VIP · Evaluasi kesiapan fisik & modifikasi beban harian otomatis',
   },
   {
     title: 'Modifikasi Cedera',
@@ -52,44 +52,79 @@ export default function UpgradeVipScreen() {
           <View style={styles.headerRow}>
             <View style={[styles.badge, { backgroundColor: theme.backgroundSelected }]}>
               <Ionicons name="sparkles" size={12} color={theme.primary} />
-              <ThemedText type="small" themeColor="primary">
+              <ThemedText type="smallBold" themeColor="primary" style={styles.badgeText}>
                 RAGAKU PRO LIVE
               </ThemedText>
             </View>
           </View>
 
-          <ThemedText type="subtitle" style={styles.title}>
-            Buka Pelatih AI Real-Time & Live Form Tracking
+          <ThemedText style={styles.title}>
+            BUKA PELATIH AI PERSONAL{'\n'}
+            <ThemedText themeColor="primary" style={styles.title}>
+              & KONSULTASI VIP REAL-TIME
+            </ThemedText>
           </ThemedText>
-          <ThemedText type="default" themeColor="textSecondary">
-            Koreksi postur otomatis, penyesuaian repetisi langsung via kamera, dan bimbingan audio
-            adaptif setiap miledetik.
+          <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
+            Program adaptif harian presisi, penyesuaian repetisi cerdas, dan bimbingan AI Coach 24/7
+            tanpa batas.
           </ThemedText>
 
           <View style={[styles.previewCard, { backgroundColor: OverlaySurface }]}>
-            <View style={styles.previewTopRow}>
-              <View style={[styles.previewBadge, { backgroundColor: 'rgba(255,255,255,0.15)' }]}>
-                <ThemedText type="small" style={styles.previewBadgeText}>
-                  OPTICAL AI 60 FPS
-                </ThemedText>
+            <View style={styles.previewHeaderRow}>
+              <View style={styles.previewHeaderLeft}>
+                <View style={[styles.previewIconCircle, { backgroundColor: theme.primary }]}>
+                  <Ionicons name="hardware-chip" size={18} color="#FFFFFF" />
+                </View>
+                <View>
+                  <ThemedText style={styles.previewHeaderTitle}>VIP AI COACH ASSISTANT</ThemedText>
+                  <ThemedText type="small" style={styles.previewHeaderSub}>
+                    Online 24/7 · Respons Adaptif
+                  </ThemedText>
+                </View>
               </View>
-              <View style={[styles.previewBadge, { backgroundColor: theme.primary }]}>
+              <View style={[styles.previewBadge, { borderColor: 'rgba(255,255,255,0.3)' }]}>
                 <ThemedText type="small" style={styles.previewBadgeText}>
-                  172° SQUAT DEPTH
+                  ULTRA{'\n'}INTELLIGENCE
                 </ThemedText>
               </View>
             </View>
-            <View style={styles.previewIconWrap}>
-              <Ionicons name="videocam" size={40} color="rgba(255,255,255,0.4)" />
+
+            <View style={[styles.chatBubble, styles.chatBubbleUser]}>
+              <ThemedText type="smallBold" style={styles.chatLabelUser}>
+                Konsultasi Atlet
+              </ThemedText>
+              <ThemedText type="small" style={styles.chatBodyUser}>
+                Bahu kanan sedikit tegang sehabis overhead press kemarin. Ada penyesuaian beban hari
+                ini?
+              </ThemedText>
             </View>
-            <ThemedText type="small" style={styles.previewCaption}>
-              Tempo Tepat: 3s Eksentrik / 1s Ledak · 98% Akurasi
-            </ThemedText>
+
+            <View style={[styles.chatBubble, styles.chatBubbleBot, { backgroundColor: theme.primary }]}>
+              <ThemedText type="smallBold" style={styles.chatLabelBot}>
+                RagaKu AI Coach
+              </ThemedText>
+              <ThemedText type="small" style={styles.chatBodyBot}>
+                Siap, beban compound shoulder press diturunkan 15% & ditambahkan 2 set rotasi rotator
+                cuff. Nutrisi pemulihan & hidrasi dioptimalkan.
+              </ThemedText>
+            </View>
+
+            <View style={styles.previewFooterRow}>
+              <ThemedText type="small" style={styles.previewFooterText}>
+                Analisis Program, Nutrisi & Cedera
+              </ThemedText>
+              <ThemedText type="small" style={styles.previewFooterLatency}>
+                LATENSI &lt; 0.5 DETIK
+              </ThemedText>
+            </View>
           </View>
 
-          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
-            MATRIKS KEUNGGULAN · GRATIS VS PRO
-          </ThemedText>
+          <View style={styles.sectionHeaderRow}>
+            <ThemedText style={styles.sectionTitle}>MATRIKS KEUNGGULAN</ThemedText>
+            <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
+              GRATIS VS PRO
+            </ThemedText>
+          </View>
           <View style={styles.comparisonList}>
             {COMPARISON_ROWS.map((row) => (
               <Card key={row.title} style={styles.comparisonCard}>
@@ -101,12 +136,24 @@ export default function UpgradeVipScreen() {
                     </ThemedText>
                   </View>
                 </View>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {row.free}
-                </ThemedText>
-                <ThemedText type="smallBold" themeColor="primary">
-                  {row.pro}
-                </ThemedText>
+                <View style={styles.comparisonColumns}>
+                  <View style={[styles.comparisonColumn, { borderColor: theme.border }]}>
+                    <ThemedText type="small" themeColor="textSecondary" style={styles.comparisonColumnLabel}>
+                      Akun Gratis
+                    </ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      {row.free.replace(/^Akun Gratis\s*·?\s*/, '')}
+                    </ThemedText>
+                  </View>
+                  <View style={[styles.comparisonColumn, styles.comparisonColumnPro, { backgroundColor: theme.backgroundSelected }]}>
+                    <ThemedText type="small" themeColor="primary" style={styles.comparisonColumnLabel}>
+                      RagaKu Pro
+                    </ThemedText>
+                    <ThemedText type="smallBold" themeColor="primary">
+                      {row.pro.replace(/^RagaKu Pro\s*·?\s*/, '')}
+                    </ThemedText>
+                  </View>
+                </View>
               </Card>
             ))}
           </View>
@@ -120,13 +167,16 @@ export default function UpgradeVipScreen() {
               </View>
               <View style={styles.rowBetween}>
                 <View>
-                  <ThemedText type="smallBold">Tahunan · VIP Unlimited</ThemedText>
+                  <ThemedText style={styles.planTitle}>TAHUNAN</ThemedText>
+                  <ThemedText type="smallBold" themeColor="primary">
+                    VIP Unlimited
+                  </ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
                     Ditagih Rp588.000/tahun setelah uji coba
                   </ThemedText>
                 </View>
                 <View style={styles.priceBlock}>
-                  <ThemedText type="subtitle" themeColor="primary" style={styles.priceValue}>
+                  <ThemedText themeColor="primary" style={styles.priceValue}>
                     Rp49.000
                   </ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
@@ -141,15 +191,16 @@ export default function UpgradeVipScreen() {
             <Card selected={plan === 'monthly'} style={styles.planCard}>
               <View style={styles.rowBetween}>
                 <View>
-                  <ThemedText type="smallBold">Bulanan · Fartlek Flex</ThemedText>
+                  <ThemedText style={styles.planTitle}>BULANAN</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Fartlek Flex
+                  </ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
                     Fleksibel, batalkan kapan saja
                   </ThemedText>
                 </View>
                 <View style={styles.priceBlock}>
-                  <ThemedText type="subtitle" style={styles.priceValue}>
-                    Rp99.000
-                  </ThemedText>
+                  <ThemedText style={styles.priceValue}>Rp99.000</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
                     /bulan
                   </ThemedText>
@@ -169,7 +220,7 @@ export default function UpgradeVipScreen() {
               Syarat & Ketentuan
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Pemulihan Pembelian
+              Pulihkan Pembelian
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               Kebijakan Privasi
@@ -203,48 +254,141 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 999,
   },
+  badgeText: {
+    fontSize: 12,
+  },
   title: {
-    fontSize: 24,
-    lineHeight: 30,
+    fontFamily: FontFamily.headingBold,
+    fontSize: 32,
+    lineHeight: 36,
+  },
+  subtitle: {
+    fontSize: 14,
   },
   previewCard: {
     borderRadius: CardRadius + 4,
     padding: Spacing.three,
-    gap: Spacing.two,
+    gap: Spacing.three,
   },
-  previewTopRow: {
+  previewHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  previewHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+    flex: 1,
+  },
+  previewIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  previewHeaderTitle: {
+    fontFamily: FontFamily.headingBold,
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  previewHeaderSub: {
+    color: '#99F6E4',
+    fontSize: 11,
   },
   previewBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 999,
+    borderWidth: 1,
   },
   previewBadgeText: {
-    color: '#FFFFFF',
+    color: '#99F6E4',
     fontSize: 10,
     letterSpacing: 0.3,
+    textAlign: 'right',
   },
-  previewIconWrap: {
-    height: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
+  chatBubble: {
+    borderRadius: 14,
+    padding: Spacing.two,
+    gap: 2,
+    maxWidth: '85%',
   },
-  previewCaption: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 12,
-    textAlign: 'center',
+  chatBubbleUser: {
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    alignSelf: 'flex-start',
+  },
+  chatBubbleBot: {
+    alignSelf: 'flex-end',
+  },
+  chatLabelUser: {
+    color: '#5EEAD4',
+    fontSize: 11,
+  },
+  chatBodyUser: {
+    color: '#F1F5F9',
+  },
+  chatLabelBot: {
+    color: '#CCFBF1',
+    fontSize: 11,
+  },
+  chatBodyBot: {
+    color: '#FFFFFF',
+  },
+  previewFooterRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 4,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.12)',
+  },
+  previewFooterText: {
+    color: '#CBD5E1',
+    fontSize: 11,
+  },
+  previewFooterLatency: {
+    color: '#5EEAD4',
+    fontSize: 11,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginTop: Spacing.two,
+  },
+  sectionTitle: {
+    fontFamily: FontFamily.headingBold,
+    fontSize: 20,
   },
   sectionLabel: {
+    fontSize: 12,
     letterSpacing: 0.4,
-    marginTop: Spacing.two,
   },
   comparisonList: {
     gap: Spacing.two,
   },
   comparisonCard: {
-    gap: 4,
+    gap: 8,
+  },
+  comparisonColumns: {
+    flexDirection: 'row',
+    gap: Spacing.two,
+  },
+  comparisonColumn: {
+    flex: 1,
+    gap: 2,
+    padding: Spacing.two,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  comparisonColumnPro: {
+    borderWidth: 0,
+  },
+  comparisonColumnLabel: {
+    fontSize: 10,
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
   },
   rowBetween: {
     flexDirection: 'row',
@@ -261,13 +405,18 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   planCard: {
-    gap: 6,
+    gap: 2,
+  },
+  planTitle: {
+    fontFamily: FontFamily.headingBold,
+    fontSize: 18,
   },
   saveBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 999,
+    marginBottom: 6,
   },
   saveBadgeText: {
     color: '#FFFFFF',
@@ -278,7 +427,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   priceValue: {
-    fontSize: 20,
+    fontFamily: FontFamily.headingBold,
+    fontSize: 24,
   },
   disclaimer: {
     textAlign: 'center',

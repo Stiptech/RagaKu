@@ -66,12 +66,24 @@ export default function ActivitiesStep() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}>
           <OnboardingHeader
-            eyebrow="ONBOARDING ASSESSMENT · TAHAP TERAKHIR"
+            eyebrow="TAHAP TERAKHIR"
             step={4}
             totalSteps={4}
-            title="Aktivitas & Olahraga Favorit"
+            title="AKTIVITAS & OLAHRAGA FAVORIT"
             description="Pilih minimal 2 aktivitas yang kamu nikmati untuk variasi jadwal kardio dan recovery mingguan."
           />
+
+          <View style={[styles.algoIntroBox, { backgroundColor: theme.backgroundSelected }]}>
+            <ThemedText type="smallBold" themeColor="primary" style={styles.algoIntroLabel}>
+              ALGORITMA PERSONALISASI
+            </ThemedText>
+            <ThemedText type="smallBold" style={styles.algoIntroTitle}>
+              ADAPTIF SESUAI PREFERENSI
+            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Mencegah kebosanan & cedera sendi repetitif.
+            </ThemedText>
+          </View>
 
           <View style={styles.grid}>
             {SPORT_OPTIONS.map((option) => (
@@ -141,27 +153,37 @@ export default function ActivitiesStep() {
 
           <View style={[styles.algoBox, { backgroundColor: theme.backgroundSelected }]}>
             <ThemedText type="small" themeColor="primary" style={styles.algoLabel}>
-              ALGORITMA PERSONALISASI
+              INTEGRASI KALENDER RAGAKU AI
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               Aktivitas favorit akan disisipkan otomatis sebagai sesi aktif pada hari istirahat gym
-              agar tidak membosankan.
+              angkat beban.
             </ThemedText>
           </View>
 
           <View style={styles.statusRow}>
-            <ThemedText type="small" themeColor="textSecondary">
-              {selectedSports.length} olahraga dipilih
+            <View style={[styles.statusDot, { backgroundColor: theme.primary }]} />
+            <ThemedText type="smallBold" themeColor="textSecondary" style={{ flex: 1 }}>
+              {selectedSports.length} OLAHRAGA DIPILIH
             </ThemedText>
+            {selectedSports.length > 0 ? (
+              <ThemedText type="smallBold" themeColor="textSecondary">
+                {selectedSports
+                  .map((activity) => SPORT_OPTIONS.find((o) => o.value === activity)?.title)
+                  .filter(Boolean)
+                  .join(' & ')
+                  .toUpperCase()}
+              </ThemedText>
+            ) : null}
           </View>
 
           <PillButton
-            label="BUAT PROGRAM AI PERSONAL SAYA →"
+            label="BUAT PROGRAM RAGAKU AI PERSONAL SAYA →"
             disabled={selectedSports.length < 2}
             onPress={() => router.replace('/workout')}
           />
           <ThemedText type="small" themeColor="textSecondary" style={styles.footerNote}>
-            Enkripsi biometrik & kerahasiaan data terjamin
+            ENKRIPSI BIOMETRIK & KEBUGARAN TERJAMIN
           </ThemedText>
         </ScrollView>
       </SafeAreaView>
@@ -217,7 +239,26 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
   },
   statusRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  algoIntroBox: {
+    padding: Spacing.three,
+    borderRadius: 16,
+    gap: 2,
+  },
+  algoIntroLabel: {
+    letterSpacing: 0.4,
+    fontSize: 10,
+  },
+  algoIntroTitle: {
+    fontSize: 16,
   },
   footerNote: {
     textAlign: 'center',

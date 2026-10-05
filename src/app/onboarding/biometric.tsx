@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useOnboarding, calculateBmi, bmiCategory, type Gender } from '@/components/onboarding/onboarding-context';
+import { useOnboarding, calculateBmi, bmiCategory, type Gender, type Goal } from '@/components/onboarding/onboarding-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
@@ -25,9 +26,20 @@ const OTHER_GENDERS: { value: Gender; label: string }[] = [
   { value: 'rahasia', label: 'Pilih tidak memberitahu' },
 ];
 
+const GOAL_OPTIONS: { value: Goal; title: string; subtitle: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  { value: 'turun-berat', title: 'Turunkan Berat Badan', subtitle: 'Fat Loss & Defisit Kalori', icon: 'flame' },
+  { value: 'bentuk-otot', title: 'Naikkan Massa Otot', subtitle: 'Hypertrophy & Rekomposisi', icon: 'barbell' },
+  { value: 'ketahanan', title: 'Naikkan Berat Badan', subtitle: 'Bulking Bersih & Surplus', icon: 'trending-up' },
+];
+
 export default function BiometricStep() {
   const theme = useTheme();
-  const { data, update } = useOnboarding();
+  const { data, update, toggleInList } = useOnboarding();
+
+  // Figma shows a gender pre-selected (AKTIF badge) so CTA renders solid, not washed-out (finding #9)
+  useEffect(() => {
+    if (!data.gender) update({ gender: 'pria' });
+  }, [data.gender, update]);
 
   const bmi = calculateBmi(data.targetWeightKg, data.heightCm);
   const deficit = (data.targetWeightKg - data.weightKg).toFixed(1);
@@ -39,11 +51,11 @@ export default function BiometricStep() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}>
           <OnboardingHeader
-            eyebrow="ONBOARDING GOAL"
+            eyebrow="KALIBRASI BIOMETRIK"
             step={1}
             totalSteps={4}
-            title="Tentukan Target & Profil Fisikmu"
-            description="RagaKu menghitung baseline metabolisme dan volume latihan personal secara presisi."
+            title="TENTUKAN TARGET & PROFIL FISIKMU"
+            description="RagaKu AI mengkalkulasi baseline metabolisme dan volume latihan personal secara presisi."
           />
 
           <Card style={styles.section}>
@@ -103,13 +115,23 @@ export default function BiometricStep() {
                 PEAK PERFORMANCE
               </ThemedText>
             </View>
-            <ThemedText type="title" style={styles.ageValue}>
-              {data.age}
-              <ThemedText type="default" themeColor="textSecondary">
-                {' '}
-                tahun
+            <View style={styles.rowBetween}>
+              <ThemedText type="title" style={styles.ageValue}>
+                {data.age}
+                <ThemedText type="default" themeColor="textSecondary">
+                  {' '}
+                  tahun
+                </ThemedText>
               </ThemedText>
-            </ThemedText>
+              <View style={styles.targetRegenBlock}>
+                <ThemedText type="small" themeColor="textMuted" style={styles.targetRegenLabel}>
+                  TARGET REGENERASI
+                </ThemedText>
+                <ThemedText type="smallBold" style={styles.targetRegenValue}>
+                  20–35 Thn (Zone A)
+                </ThemedText>
+              </View>
+            </View>
             <SliderTrack
               value={data.age}
               min={15}
@@ -141,6 +163,54 @@ export default function BiometricStep() {
                 max={200}
                 onChange={(weightKg) => update({ weightKg })}
               />
+            </View>
+          </Card>
+
+          <Card style={styles.section}>
+            <View style={styles.rowBetween}>
+              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
+                TARGET UTAMA KEBUGARAN
+              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Pilih Fokus
+              </ThemedText>
+            </View>
+            <View style={styles.listGap}>
+              {GOAL_OPTIONS.map((option) => {
+                const selected = data.goals.includes(option.value);
+                return (
+                  <Pressable key={option.value} onPress={() => toggleInList('goals', option.value)}>
+                    <Card selected={selected} style={styles.goalRow}>
+                      <View
+                        style={[
+                          styles.goalIconBox,
+                          { backgroundColor: selected ? theme.backgroundSelected : theme.background },
+                        ]}>
+                        <Ionicons
+                          name={option.icon}
+                          size={20}
+                          color={selected ? theme.primary : theme.textSecondary}
+                        />
+                      </View>
+                      <View style={styles.goalTextBlock}>
+                        <ThemedText type="smallBold" style={styles.goalTitle}>
+                          {option.title.toUpperCase()}
+                        </ThemedText>
+                        <ThemedText type="small" themeColor="textSecondary">
+                          {option.subtitle}
+                        </ThemedText>
+                      </View>
+                      {selected ? (
+                        <View style={[styles.checkCircle, { backgroundColor: theme.primary }]}>
+                          <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                        </View>
+                      ) : (
+                        <View style={[styles.checkCircleEmpty, { borderColor: theme.border }]} />
+                      )}
+                    </Card>
+                  </Pressable>
+                );
+              })}
             </View>
           </Card>
 
@@ -180,7 +250,7 @@ export default function BiometricStep() {
             onPress={() => router.push('/onboarding/health')}
           />
           <ThemedText type="small" themeColor="textSecondary" style={styles.footerNote}>
-            Data biometrik terenkripsi lokal dan privat
+            Data biometrik terenkripsi aman & privat di RagaKu
           </ThemedText>
         </ScrollView>
       </SafeAreaView>
@@ -249,6 +319,19 @@ const styles = StyleSheet.create({
     fontSize: 40,
     lineHeight: 44,
   },
+  targetRegenBlock: {
+    alignItems: 'flex-end',
+    gap: 2,
+  },
+  targetRegenLabel: {
+    fontSize: 10,
+    letterSpacing: 0.3,
+    textAlign: 'right',
+  },
+  targetRegenValue: {
+    fontSize: 13,
+    textAlign: 'right',
+  },
   stepperRow: {},
   divider: {
     height: 1,
@@ -277,5 +360,42 @@ const styles = StyleSheet.create({
   },
   footerNote: {
     textAlign: 'center',
+  },
+  listGap: {
+    gap: Spacing.two,
+  },
+  goalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    padding: Spacing.three,
+  },
+  goalIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  goalTextBlock: {
+    flex: 1,
+    gap: 2,
+  },
+  goalTitle: {
+    fontSize: 14,
+    letterSpacing: 0.2,
+  },
+  checkCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkCircleEmpty: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
   },
 });
