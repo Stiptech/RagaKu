@@ -15,6 +15,7 @@ import { ThemedView } from '@/components/themed-view';
 import { PillButton } from '@/components/ui/pill-button';
 import { TextField } from '@/components/ui/text-field';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/hooks/use-theme';
 
 function isValidEmail(value: string) {
@@ -23,26 +24,47 @@ function isValidEmail(value: string) {
 
 export default function LoginScreen() {
   const theme = useTheme();
+  const { signIn } = useAuth();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState<string | undefined>();
   const [passwordError, setPasswordError] = useState<string | undefined>();
+  const [formError, setFormError] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    if (loading) return;
+
+    setFormError(undefined);
+
     const nextEmailError = isValidEmail(email) ? undefined : 'Masukkan email yang valid';
     const nextPasswordError = password.length >= 6 ? undefined : 'Kata sandi minimal 6 karakter';
 
     setEmailError(nextEmailError);
     setPasswordError(nextPasswordError);
 
-    if (nextEmailError || nextPasswordError) return;
+    if (nextEmailError || nextPasswordError) {
+      return;
+    }
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+
+    try {
+      const { error } = await signIn(email.trim(), password);
+
+      if (error) {
+        setFormError(error);
+        return;
+      }
+
       router.replace('/onboarding');
-    }, 700);
+    } catch (err) {
+      console.error('[login] unexpected error during login:', err);
+      setFormError('Terjadi kesalahan tak terduga. Coba lagi.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -92,6 +114,7 @@ export default function LoginScreen() {
                 onChangeText={(value) => {
                   setEmail(value);
                   if (emailError) setEmailError(undefined);
+                  if (formError) setFormError(undefined);
                 }}
                 errorText={emailError}
                 returnKeyType="next"
@@ -105,6 +128,7 @@ export default function LoginScreen() {
                 onChangeText={(value) => {
                   setPassword(value);
                   if (passwordError) setPasswordError(undefined);
+                  if (formError) setFormError(undefined);
                 }}
                 errorText={passwordError}
                 returnKeyType="done"
@@ -117,6 +141,19 @@ export default function LoginScreen() {
                 </ThemedText>
               </Pressable>
             </View>
+
+            {formError ? (
+              <View
+                accessibilityRole="alert"
+                style={[
+                  styles.formErrorBox,
+                  { backgroundColor: theme.backgroundElement, borderColor: theme.error },
+                ]}>
+                <ThemedText type="small" themeColor="error">
+                  {formError}
+                </ThemedText>
+              </View>
+            ) : null}
 
             <PillButton
               label="MASUK"
@@ -226,6 +263,13 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginTop: Spacing.two,
+  },
+  formErrorBox: {
+    marginTop: Spacing.three,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.two,
   },
   dividerRow: {
     flexDirection: 'row',

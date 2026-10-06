@@ -19,6 +19,7 @@ export const Colors = {
     primaryDark: '#027A74',
     accent: '#06B6D4',
     warning: '#F97316',
+    error: '#DC2626',
   },
   dark: {
     text: '#F8FAFC',
@@ -31,6 +32,7 @@ export const Colors = {
     primaryDark: '#0D9488',
     accent: '#22D3EE',
     warning: '#FB923C',
+    error: '#F87171',
   },
 } as const;
 
