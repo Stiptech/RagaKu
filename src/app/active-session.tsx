@@ -9,7 +9,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { PillButton } from '@/components/ui/pill-button';
-import { CardRadius, MaxContentWidth, OverlaySurface, Spacing } from '@/constants/theme';
+import { CardRadius, FontFamily, MaxContentWidth, OverlaySurface, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 const TOTAL_SETS = 4;
@@ -78,75 +78,116 @@ export default function ActiveSessionScreen() {
               style={[styles.iconButton, { borderColor: theme.border }]}>
               <Ionicons name="chevron-back" size={18} color={theme.text} />
             </Pressable>
-            <View style={styles.topCenter}>
-              <ThemedText type="small" themeColor="textSecondary" style={styles.eyebrow}>
-                ACTIVE SESSION
+            <View style={[styles.ragakuBadge, { borderColor: theme.primary }]}>
+              <Ionicons name="flash" size={12} color={theme.primary} />
+              <ThemedText type="smallBold" themeColor="primary" style={styles.ragakuBadgeText}>
+                RAGAKU
               </ThemedText>
-              <ThemedText type="smallBold">Biceps + Brachialis</ThemedText>
+            </View>
+            <View style={styles.topCenter}>
+              <ThemedText style={styles.sessionTitle}>ACTIVE{'\n'}SESSION</ThemedText>
+            </View>
+            <View style={[styles.stepPill, { backgroundColor: theme.background }]}>
+              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.stepPillText}>
+                STEP{'\n'}ACTIVE
+              </ThemedText>
+            </View>
+            <View style={[styles.avatarCircle, { backgroundColor: theme.primary }]}>
+              <Ionicons name="person" size={16} color="#FFFFFF" />
+            </View>
+          </View>
+
+          <View style={styles.statusRow}>
+            <View style={[styles.statusPill, { borderColor: theme.primary }]}>
+              <ThemedText type="smallBold" themeColor="primary" style={styles.eyebrow}>
+                BICEPS · BRACHIALIS
+              </ThemedText>
             </View>
             <View style={[styles.visionBadge, { backgroundColor: theme.backgroundSelected }]}>
-              <ThemedText type="small" themeColor="primary">
-                VISION 2.4
+              <ThemedText type="small" themeColor="primary" style={styles.visionBadgeText}>
+                VISION ENGINE 2.4
               </ThemedText>
             </View>
           </View>
 
           <View style={[styles.playerCard, { backgroundColor: OverlaySurface }]}>
-            <View style={[styles.setBadge, { backgroundColor: theme.primary }]}>
-              <ThemedText type="small" style={styles.setBadgeText}>
-                SET {currentSet} SEDANG BERJALAN
-              </ThemedText>
+            <View style={styles.playerTopRow}>
+              <View style={[styles.setBadge, { backgroundColor: 'rgba(255,255,255,0.12)' }]}>
+                <View style={[styles.liveDot, { backgroundColor: theme.primary }]} />
+                <ThemedText type="small" style={styles.setBadgeText}>
+                  SET {currentSet} SEDANG BERJALAN
+                </ThemedText>
+              </View>
+              <View style={[styles.timeBadge, { backgroundColor: 'rgba(255,255,255,0.12)' }]}>
+                <ThemedText type="smallBold" style={styles.timeBadgeText}>
+                  {formatTime(elapsed)} / SET {currentSet}
+                </ThemedText>
+              </View>
             </View>
 
             <Pressable
               onPress={() => setPlaying((value) => !value)}
-              style={styles.playButton}
+              style={[styles.playButton, { backgroundColor: theme.primary }]}
               hitSlop={12}>
               <Ionicons name={playing ? 'pause' : 'play'} size={30} color="#FFFFFF" />
             </Pressable>
 
             <View style={styles.playerFooter}>
-              <ThemedText type="small" style={styles.timerText}>
-                {formatTime(elapsed)} / SET {currentSet}
-              </ThemedText>
-              <ProgressBar percent={percent} color="#FFFFFF" trackColor="rgba(255,255,255,0.25)" />
+              <ProgressBar percent={percent} color={theme.primary} trackColor="rgba(255,255,255,0.2)" />
               <View style={styles.playerControlsRow}>
-                <Ionicons name="play-skip-back" size={16} color="rgba(255,255,255,0.7)" />
-                <ThemedText type="small" style={styles.speedText}>
-                  1.0x
+                <Ionicons name="volume-medium-outline" size={16} color="rgba(255,255,255,0.7)" />
+                <ThemedText type="small" style={styles.timerSmallText}>
+                  {formatTime(secondsLeft)}
                 </ThemedText>
-                <Ionicons name="play-skip-forward" size={16} color="rgba(255,255,255,0.7)" />
+                <View style={styles.playerControlsRight}>
+                  <View style={[styles.speedPill, { backgroundColor: 'rgba(255,255,255,0.12)' }]}>
+                    <ThemedText type="small" style={styles.speedText}>
+                      1.0X
+                    </ThemedText>
+                  </View>
+                  <Ionicons name="scan-outline" size={16} color="rgba(255,255,255,0.7)" />
+                </View>
               </View>
             </View>
           </View>
 
           <Card style={styles.section}>
             <View style={styles.rowBetween}>
-              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
-                SMART CAMERA TRACKER
-              </ThemedText>
+              <View style={styles.trackerTitleRow}>
+                <Ionicons name="videocam-outline" size={16} color={theme.primary} />
+                <ThemedText style={styles.sectionTitle}>SMART CAMERA TRACKER</ThemedText>
+              </View>
               <View style={[styles.activeTag, { backgroundColor: theme.backgroundSelected }]}>
                 <ThemedText type="small" themeColor="primary">
                   AKTIF
                 </ThemedText>
               </View>
             </View>
-            <View style={styles.rowBetween}>
-              <ThemedText type="small" themeColor="textSecondary">
-                Sudut Siku Optimal: 85° – 90°
-              </ThemedText>
-              <View style={[styles.optimalBadge, { backgroundColor: theme.primary }]}>
-                <ThemedText type="small" style={styles.optimalBadgeText}>
-                  Optimal (88°)
+
+            <View style={[styles.angleRow, { backgroundColor: theme.background, borderColor: theme.border }]}>
+              <View style={styles.angleCol}>
+                <ThemedText type="smallBold" themeColor="textSecondary" style={styles.angleLabel}>
+                  SUDUT SIKU{'\n'}OPTIMAL
                 </ThemedText>
+                <ThemedText style={styles.angleValue}>85° – 90°</ThemedText>
+              </View>
+              <View style={styles.angleColRight}>
+                <ThemedText type="smallBold" themeColor="textSecondary" style={styles.angleLabel}>
+                  DEVIASI TERKINI
+                </ThemedText>
+                <View style={[styles.optimalBadge, { backgroundColor: theme.backgroundSelected }]}>
+                  <ThemedText type="smallBold" themeColor="primaryDark" style={styles.optimalBadgeText}>
+                    Optimal (88°)
+                  </ThemedText>
+                </View>
               </View>
             </View>
 
             <View style={styles.metricRow}>
-              <Metric label="TARGET" value={`${TOTAL_SETS} Set`} />
-              <Metric label="VOLUME" value="12 Reps" />
-              <Metric label="BEBAN" value="8 Kg" />
-              <Metric label="JEDA" value="60 Detik" />
+              <Metric label="TARGET" value={`${TOTAL_SETS}`} unit="Set" />
+              <Metric label="VOLUME" value="12" unit="Reps" />
+              <Metric label="BEBAN" value="8" unit="Kg" />
+              <Metric label="JEDA" value="60" unit="Detik" />
             </View>
           </Card>
 
@@ -177,19 +218,30 @@ export default function ActiveSessionScreen() {
             ))}
           </View>
 
-          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
-            INSTRUKSI TAHAP DEMI TAHAP
-          </ThemedText>
+          <View style={styles.instructionHeaderRow}>
+            <Ionicons name="reader-outline" size={16} color={theme.text} />
+            <ThemedText style={styles.sectionTitle}>INSTRUKSI TAHAP DEMI TAHAP</ThemedText>
+          </View>
           <View style={styles.stepsList}>
             {STEPS.map((step, index) => (
               <View key={step.title} style={styles.stepRow}>
-                <View style={[styles.stepIndex, { backgroundColor: theme.primary }]}>
-                  <ThemedText type="smallBold" style={styles.stepIndexText}>
+                <View
+                  style={[
+                    styles.stepIndex,
+                    index === 0
+                      ? { backgroundColor: theme.primary }
+                      : { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: theme.border },
+                  ]}>
+                  <ThemedText
+                    type="smallBold"
+                    style={index === 0 ? styles.stepIndexTextActive : { color: theme.textSecondary }}>
                     {index + 1}
                   </ThemedText>
                 </View>
                 <View style={styles.stepTextBlock}>
-                  <ThemedText type="smallBold">{step.title}</ThemedText>
+                  <ThemedText type="smallBold" style={styles.stepTitle}>
+                    {step.title.toUpperCase()}
+                  </ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
                     {step.detail}
                   </ThemedText>
@@ -200,10 +252,22 @@ export default function ActiveSessionScreen() {
 
           <View style={[styles.tipBox, { backgroundColor: '#FFF7ED', borderColor: theme.warning }]}>
             <Ionicons name="shield-checkmark" size={16} color={theme.warning} />
-            <ThemedText type="small" themeColor="textSecondary" style={styles.tipText}>
-              RagaKu AI Pro Tip · Proteksi Sendi: jaga bahu tetap rileks untuk menghindari
-              ketegangan berlebih pada leher dan maksimalkan aktivasi brachioradialis.
-            </ThemedText>
+            <View style={styles.tipTextBlock}>
+              <View style={styles.tipTitleRow}>
+                <ThemedText type="smallBold" themeColor="warning" style={styles.tipTitle}>
+                  RAGAKU AI PRO TIP
+                </ThemedText>
+                <View style={[styles.tipBadge, { borderColor: theme.warning }]}>
+                  <ThemedText type="small" themeColor="warning" style={styles.tipBadgeText}>
+                    PROTEKSI SENDI
+                  </ThemedText>
+                </View>
+              </View>
+              <ThemedText type="small" themeColor="textSecondary">
+                Catatan Khusus: Jaga bahu tetap rileks untuk menghindari ketegangan berlebih pada
+                leher dan maksimalkan aktivasi brachioradialis.
+              </ThemedText>
+            </View>
           </View>
 
           <PillButton
@@ -220,20 +284,23 @@ export default function ActiveSessionScreen() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Metric({ label, value, unit }: { label: string; value: string; unit: string }) {
   return (
     <View style={styles.metricItem}>
       <ThemedText type="small" themeColor="textSecondary" style={styles.metricLabel}>
         {label}
       </ThemedText>
-      <ThemedText type="smallBold">{value}</ThemedText>
+      <ThemedText style={styles.metricValue}>{value}</ThemedText>
+      <ThemedText type="small" themeColor="textSecondary" style={styles.metricUnit}>
+        {unit}
+      </ThemedText>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  safeArea: { flex: 1, alignItems: 'center' },
+  safeArea: { flex: 1 },
   scrollContent: {
     width: '100%',
     maxWidth: MaxContentWidth,
@@ -256,18 +323,68 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  ragakuBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  ragakuBadgeText: {
+    fontSize: 11,
+    letterSpacing: 0.3,
+  },
   topCenter: {
     flex: 1,
+    alignItems: 'center',
+  },
+  statusRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  statusPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
   },
   eyebrow: {
     letterSpacing: 0.6,
-    textTransform: 'uppercase',
+    fontSize: 11,
+  },
+  sessionTitle: {
+    fontFamily: FontFamily.headingBold,
+    fontSize: 20,
+    lineHeight: 22,
+    textAlign: 'center',
+  },
+  stepPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  stepPillText: {
     fontSize: 10,
+    lineHeight: 12,
+    textAlign: 'center',
+  },
+  avatarCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   visionBadge: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 999,
+  },
+  visionBadgeText: {
+    fontSize: 11,
   },
   playerCard: {
     borderRadius: CardRadius + 4,
@@ -275,57 +392,118 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     alignItems: 'center',
   },
+  playerTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  liveDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
   setBadge: {
-    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 6,
     borderRadius: 999,
   },
   setBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 10,
+    color: '#5EEAD4',
+    fontSize: 11,
     letterSpacing: 0.3,
+  },
+  timeBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  timeBadgeText: {
+    color: '#F1F5F9',
+    fontSize: 12,
   },
   playButton: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: Spacing.four,
   },
   playerFooter: {
     width: '100%',
-    gap: 6,
-  },
-  timerText: {
-    color: '#FFFFFF',
+    gap: 8,
   },
   playerControlsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.four,
+    justifyContent: 'space-between',
   },
-  speedText: {
-    color: 'rgba(255,255,255,0.7)',
-  },
-  section: {
+  playerControlsRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.two,
   },
-  sectionLabel: {
-    letterSpacing: 0.4,
+  timerSmallText: {
+    color: '#CBD5E1',
+    fontSize: 11,
+  },
+  speedPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  speedText: {
+    color: '#5EEAD4',
+    fontSize: 11,
+  },
+  section: {
+    gap: Spacing.three,
+  },
+  sectionTitle: {
+    fontFamily: FontFamily.headingBold,
+    fontSize: 20,
   },
   rowBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  trackerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   activeTag: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 999,
+  },
+  angleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: Spacing.three,
+  },
+  angleCol: {
+    gap: 2,
+  },
+  angleColRight: {
+    gap: 4,
+    alignItems: 'flex-end',
+  },
+  angleLabel: {
+    fontSize: 11,
+    letterSpacing: 0.3,
+  },
+  angleValue: {
+    fontFamily: FontFamily.headingBold,
+    fontSize: 20,
   },
   optimalBadge: {
     paddingHorizontal: 10,
@@ -333,13 +511,11 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   optimalBadgeText: {
-    color: '#FFFFFF',
     fontSize: 11,
   },
   metricRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: Spacing.two,
   },
   metricItem: {
     alignItems: 'center',
@@ -348,6 +524,13 @@ const styles = StyleSheet.create({
   metricLabel: {
     fontSize: 10,
     letterSpacing: 0.3,
+  },
+  metricValue: {
+    fontFamily: FontFamily.headingExtraBold,
+    fontSize: 26,
+  },
+  metricUnit: {
+    fontSize: 11,
   },
   feedbackRow: {
     flexDirection: 'row',
@@ -359,6 +542,11 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.two,
     borderRadius: 999,
     borderWidth: 1.5,
+  },
+  instructionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   stepsList: {
     gap: Spacing.three,
@@ -374,13 +562,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  stepIndexText: {
+  stepIndexTextActive: {
     color: '#FFFFFF',
     fontSize: 12,
   },
   stepTextBlock: {
     flex: 1,
     gap: 2,
+  },
+  stepTitle: {
+    fontSize: 14,
+    letterSpacing: 0.2,
   },
   tipBox: {
     flexDirection: 'row',
@@ -389,7 +581,26 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
   },
-  tipText: {
+  tipTextBlock: {
     flex: 1,
+    gap: 4,
+  },
+  tipTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  tipTitle: {
+    fontSize: 12,
+  },
+  tipBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  tipBadgeText: {
+    fontSize: 10,
   },
 });

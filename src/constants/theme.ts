@@ -10,10 +10,11 @@ import { Platform } from 'react-native';
 export const Colors = {
   light: {
     text: '#0F172A',
-    background: '#F8FAFC',
+    background: '#F8F9FF',
     backgroundElement: '#FFFFFF',
     backgroundSelected: '#E6F5F3',
     textSecondary: '#64748B',
+    textMuted: '#94A3B8',
     border: '#E2E8F0',
     primary: '#0D9488',
     primaryDark: '#027A74',
@@ -26,12 +27,24 @@ export const Colors = {
     backgroundElement: '#161D2E',
     backgroundSelected: '#1B2A2B',
     textSecondary: '#94A3B8',
+    textMuted: '#64748B',
     border: '#243044',
     primary: '#14B8A6',
     primaryDark: '#0D9488',
     accent: '#22D3EE',
     warning: '#FB923C',
   },
+} as const;
+
+/** Figma spec fonts: Barlow Condensed for headings/numbers, Plus Jakarta Sans for body/labels. */
+export const FontFamily = {
+  headingBold: 'BarlowCondensed_700Bold',
+  headingExtraBold: 'BarlowCondensed_800ExtraBold',
+  headingSemiBold: 'BarlowCondensed_600SemiBold',
+  bodyRegular: 'PlusJakartaSans_400Regular',
+  bodyMedium: 'PlusJakartaSans_500Medium',
+  bodySemiBold: 'PlusJakartaSans_600SemiBold',
+  bodyBold: 'PlusJakartaSans_700Bold',
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
@@ -71,7 +84,7 @@ export const Spacing = {
   six: 64,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
+export const BottomTabInset = Platform.select({ ios: 50, android: 80, web: 96 }) ?? 0;
 export const MaxContentWidth = 800;
 
 export const CardRadius = 16;

@@ -8,7 +8,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, FontFamily, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type ExerciseCategory = 'Semua' | 'Dumbbell' | 'Bodyweight' | 'Kardio' | 'Mobilitas';
@@ -57,9 +57,7 @@ export default function ExerciseLibraryScreen() {
             <ThemedText type="small" themeColor="textSecondary" style={styles.eyebrow}>
               EXERCISE LIBRARY
             </ThemedText>
-            <ThemedText type="subtitle" style={styles.title}>
-              Daftar Gerakan
-            </ThemedText>
+            <ThemedText style={styles.title}>Daftar Gerakan</ThemedText>
           </View>
 
           <View style={[styles.searchRow, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
@@ -87,16 +85,24 @@ export default function ExerciseLibraryScreen() {
           </ScrollView>
 
           <View style={styles.list}>
-            {filtered.map((exercise) => (
+            {filtered.map((exercise, index) => (
               <Pressable key={exercise.title} onPress={() => router.push('/active-session')}>
                 <Card style={styles.exerciseRow}>
+                  <View style={[styles.exerciseIndex, { backgroundColor: theme.background }]}>
+                    <ThemedText type="smallBold" themeColor="textSecondary">
+                      {String(index + 1).padStart(2, '0')}
+                    </ThemedText>
+                  </View>
                   <View style={[styles.iconBox, { backgroundColor: theme.backgroundSelected }]}>
                     <MaterialCommunityIcons name={exercise.icon} size={22} color={theme.primary} />
                   </View>
                   <View style={styles.exerciseTextBlock}>
-                    <ThemedText type="smallBold">{exercise.title}</ThemedText>
+                    <ThemedText style={styles.exerciseTitle}>{exercise.title}</ThemedText>
+                    <ThemedText type="smallBold" themeColor="primary" style={styles.exerciseMeta}>
+                      {exercise.meta}
+                    </ThemedText>
                     <ThemedText type="small" themeColor="textSecondary">
-                      {exercise.muscle} · {exercise.meta}
+                      {exercise.muscle}
                     </ThemedText>
                   </View>
                   <Ionicons name="play-circle" size={26} color={theme.primary} />
@@ -118,7 +124,7 @@ export default function ExerciseLibraryScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  safeArea: { flex: 1, alignItems: 'center' },
+  safeArea: { flex: 1 },
   scrollContent: {
     width: '100%',
     maxWidth: MaxContentWidth,
@@ -132,8 +138,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   title: {
-    fontSize: 26,
-    lineHeight: 30,
+    fontFamily: FontFamily.headingBold,
+    fontSize: 28,
+    lineHeight: 32,
   },
   searchRow: {
     flexDirection: 'row',
@@ -147,6 +154,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
+    fontFamily: FontFamily.bodyMedium,
   },
   chipRow: {
     flexDirection: 'row',
@@ -161,6 +169,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.three,
   },
+  exerciseIndex: {
+    width: 28,
+    height: 28,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   iconBox: {
     width: 44,
     height: 44,
@@ -171,6 +186,15 @@ const styles = StyleSheet.create({
   exerciseTextBlock: {
     flex: 1,
     gap: 2,
+  },
+  exerciseTitle: {
+    fontFamily: FontFamily.headingBold,
+    fontSize: 18,
+    lineHeight: 22,
+  },
+  exerciseMeta: {
+    fontSize: 11,
+    letterSpacing: 0.3,
   },
   emptyText: {
     textAlign: 'center',

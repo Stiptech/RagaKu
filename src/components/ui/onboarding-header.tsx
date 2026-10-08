@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -36,9 +36,16 @@ export function OnboardingHeader({
           <Ionicons name="chevron-back" size={18} color={theme.text} />
         </Pressable>
 
-        <View style={styles.eyebrowBlock}>
-          <ThemedText type="small" themeColor="textSecondary" style={styles.eyebrow}>
-            {eyebrow}
+        {/* RagaKu brand lockup, reused from auth-header pattern (finding #1) */}
+        <View style={styles.logoRow}>
+          <View style={[styles.logoMark, { backgroundColor: theme.primary }]}>
+            <Ionicons name="pulse" size={14} color="#FFFFFF" />
+          </View>
+          <ThemedText type="smallBold" style={styles.logoWord}>
+            RAGAKU
+          </ThemedText>
+          <ThemedText type="small" themeColor="primary" style={styles.logoSuper}>
+            AI
           </ThemedText>
         </View>
 
@@ -49,6 +56,10 @@ export function OnboardingHeader({
           </ThemedText>
         </View>
       </View>
+
+      <ThemedText type="small" themeColor="textSecondary" style={styles.eyebrow}>
+        {eyebrow}
+      </ThemedText>
 
       <View style={styles.progressRow}>
         <ThemedText type="smallBold" themeColor="textSecondary">
@@ -84,6 +95,7 @@ const styles = StyleSheet.create({
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: Spacing.two,
   },
   iconButton: {
@@ -94,8 +106,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  eyebrowBlock: {
+  logoRow: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+  },
+  logoMark: {
+    width: 22,
+    height: 22,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoWord: {
+    fontSize: 13,
+    letterSpacing: 0.3,
+  },
+  logoSuper: {
+    fontSize: 9,
+    fontWeight: '700',
+    marginLeft: -2,
+    marginTop: -5,
   },
   eyebrow: {
     letterSpacing: 1,

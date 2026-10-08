@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BodyDiagram, type BodyZone } from '@/components/onboarding/body-diagram';
@@ -11,6 +12,7 @@ import { Card } from '@/components/ui/card';
 import { Chip } from '@/components/ui/chip';
 import { OnboardingHeader } from '@/components/ui/onboarding-header';
 import { PillButton } from '@/components/ui/pill-button';
+import { Segmented } from '@/components/ui/segmented';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -21,9 +23,9 @@ const ZONE_TO_INJURY: Record<BodyZone, Injury> = {
 };
 
 const QUICK_CONDITIONS: { value: Injury; label: string }[] = [
-  { value: 'lutut', label: 'Lutut Sensitif' },
+  { value: 'lutut', label: 'Pemulihan Meniskus Lutut' },
   { value: 'punggung', label: 'Nyeri Punggung Bawah' },
-  { value: 'bahu', label: 'Cedera Bahu' },
+  { value: 'bahu', label: 'Bahu Kaku' },
   { value: 'tekanan-rendah', label: 'Tekanan Darah Rendah' },
   { value: 'tekanan-tinggi', label: 'Tekanan Darah Tinggi' },
   { value: 'asma', label: 'Asma' },
@@ -43,6 +45,12 @@ const PROTECTION_NOTES: Partial<Record<Injury, string>> = {
 export default function HealthStep() {
   const theme = useTheme();
   const { data, toggleInList } = useOnboarding();
+
+  // Local-only UI state (finding #5/#6): data model is not extended, these never persist across nav.
+  const [bodyView, setBodyView] = useState<'depan' | 'belakang'>('depan');
+  const [showNoteInput, setShowNoteInput] = useState(false);
+  const [noteDraft, setNoteDraft] = useState('');
+  const [savedNotes, setSavedNotes] = useState<string[]>([]);
 
   const toggleInjury = (value: Injury) => {
     if (value === 'tidak-ada') {
@@ -69,19 +77,32 @@ export default function HealthStep() {
             eyebrow="ONBOARDING ASSESSMENT"
             step={2}
             totalSteps={4}
-            title="Riwayat Cedera & Kesehatan"
-            description="Tandai area tubuh yang perlu dihindari atau dipulihkan agar AI memodifikasi gerakan secara aman."
+            title="RIWAYAT CEDERA & KESEHATAN"
+            description="Tandai area tubuh yang perlu dihindari atau dipulihkan agar RagaKu AI memodifikasi gerakan latihan secara aman."
           />
 
           <Card style={styles.section}>
             <View style={[styles.scanBadge, { backgroundColor: theme.backgroundSelected }]}>
               <Ionicons name="body" size={14} color={theme.primary} />
-              <ThemedText type="small" themeColor="primary">
-                KETUK AREA TUBUH YANG BERMASALAH
+              <ThemedText type="smallBold" themeColor="primary">
+                BIOMETRIC SCAN ACTIVE
               </ThemedText>
             </View>
 
+            <Segmented
+              options={[
+                { label: 'DEPAN', value: 'depan' },
+                { label: 'BELAKANG', value: 'belakang' },
+              ]}
+              value={bodyView}
+              onChange={setBodyView}
+            />
+
             <BodyDiagram activeZones={activeZones} onToggleZone={toggleZone} />
+
+            <ThemedText type="small" themeColor="textSecondary" style={styles.scanHint}>
+              Ketuk titik persendian atau pilih tag kondisi di bawah
+            </ThemedText>
           </Card>
 
           <Card style={styles.section}>
@@ -89,7 +110,7 @@ export default function HealthStep() {
               <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
                 KONDISI CEPAT
               </ThemedText>
-              <ThemedText type="small" themeColor="primary">
+              <ThemedText type="smallBold" themeColor="primary">
                 {activeInjuries.length} TERPILIH
               </ThemedText>
             </View>
@@ -105,13 +126,73 @@ export default function HealthStep() {
             </View>
           </Card>
 
+          <Card style={styles.section}>
+            <View style={styles.rowBetween}>
+              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
+                KONDISI / RIWAYAT LAINNYA (KUSTOM)
+              </ThemedText>
+              <ThemedText
+                type="smallBold"
+                themeColor="primary"
+                style={styles.addNoteLink}
+                onPress={() => setShowNoteInput((prev) => !prev)}>
+                + TAMBAH CATATAN KHUSUS
+              </ThemedText>
+            </View>
+
+            {showNoteInput ? (
+              <View style={styles.noteBlock}>
+                <TextInput
+                  value={noteDraft}
+                  onChangeText={setNoteDraft}
+                  placeholder="Contoh: Pasca operasi hernia / jahitan di bagian perut 6 bulan lalu, saraf kejepit ringan..."
+                  placeholderTextColor={theme.textMuted}
+                  multiline
+                  numberOfLines={3}
+                  style={[
+                    styles.noteInput,
+                    { borderColor: theme.border, color: theme.text, backgroundColor: theme.background },
+                  ]}
+                />
+                <PillButton
+                  label="SIMPAN"
+                  style={styles.saveButton}
+                  onPress={() => {
+                    if (!noteDraft.trim()) return;
+                    setSavedNotes((prev) => [...prev, noteDraft.trim()]);
+                    setNoteDraft('');
+                    setShowNoteInput(false);
+                  }}
+                />
+              </View>
+            ) : null}
+
+            {savedNotes.length > 0 ? (
+              <View style={styles.noteTagsBlock}>
+                <ThemedText type="small" themeColor="textMuted">
+                  Tag Aktif:
+                </ThemedText>
+                <View style={styles.chipRow}>
+                  {savedNotes.map((note, index) => (
+                    <Chip key={`${note}-${index}`} label={note} selected />
+                  ))}
+                </View>
+              </View>
+            ) : null}
+          </Card>
+
           {activeInjuries.length > 0 ? (
             <View style={[styles.protectionBox, { backgroundColor: '#FFF7ED', borderColor: theme.warning }]}>
               <View style={styles.protectionHeader}>
                 <Ionicons name="shield-checkmark" size={16} color={theme.warning} />
-                <ThemedText type="smallBold" style={{ color: theme.warning }}>
-                  AI PROTECTION PROTOCOL AKTIF
+                <ThemedText type="smallBold" style={{ color: theme.warning, flex: 1 }}>
+                  RAGAKU AI PROTECTION PROTOCOL AKTIF
                 </ThemedText>
+                <View style={[styles.safeBadge, { backgroundColor: '#FFEDD5' }]}>
+                  <ThemedText type="small" style={{ color: theme.warning, fontSize: 10 }}>
+                    PEMBERITAHUAN AMAN
+                  </ThemedText>
+                </View>
               </View>
               {activeInjuries.map((injury) => (
                 <ThemedText key={injury} type="small" themeColor="textSecondary" style={styles.protectionText}>
@@ -140,7 +221,7 @@ export default function HealthStep() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  safeArea: { flex: 1, alignItems: 'center' },
+  safeArea: { flex: 1 },
   scrollContent: {
     width: '100%',
     maxWidth: MaxContentWidth,
@@ -165,6 +246,9 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 999,
   },
+  scanHint: {
+    textAlign: 'center',
+  },
   rowBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -186,10 +270,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
+  safeBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
   protectionText: {
     lineHeight: 18,
   },
   skipLink: {
     textAlign: 'center',
+  },
+  addNoteLink: {
+    fontSize: 10,
+    letterSpacing: 0.3,
+  },
+  noteBlock: {
+    gap: Spacing.two,
+  },
+  noteInput: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: Spacing.three,
+    minHeight: 80,
+    textAlignVertical: 'top',
+    fontSize: 14,
+  },
+  saveButton: {
+    height: 40,
+    alignSelf: 'flex-end',
+    paddingHorizontal: 20,
+  },
+  noteTagsBlock: {
+    gap: 6,
   },
 });
