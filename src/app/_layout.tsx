@@ -51,6 +51,7 @@ export default function RootLayout() {
           <Stack.Screen name="login" />
           <Stack.Screen name="registrasi" />
           <Stack.Screen name="lupa-password" />
+          <Stack.Screen name="reset-password" />
           <Stack.Screen name="onboarding" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="active-session" options={{ presentation: 'fullScreenModal' }} />

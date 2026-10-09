@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { createURL } from 'expo-linking';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -55,7 +56,9 @@ export default function LupaPasswordScreen() {
     }
 
     setLoading(true);
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(identifier.trim());
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(identifier.trim(), {
+      redirectTo: createURL('reset-password'),
+    });
     setLoading(false);
 
     if (resetError) {

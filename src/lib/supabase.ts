@@ -15,6 +15,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+    flowType: 'pkce',
   },
 });
 
@@ -29,6 +30,12 @@ export function describeAuthError(error: { name?: string; message: string }) {
     return 'Email belum dikonfirmasi. Cek kotak masuk emailmu.';
   }
   if (message.includes('already registered')) return 'Email ini sudah terdaftar. Silakan masuk.';
+  if (message.includes('different from the old')) {
+    return 'Kata sandi baru tidak boleh sama dengan kata sandi lama.';
+  }
+  if (message.includes('code verifier') || message.includes('auth session missing')) {
+    return 'Tautan hanya berlaku di perangkat yang meminta pemulihan. Minta tautan baru dari HP ini.';
+  }
   if (message.includes('rate limit') || message.includes('security purposes')) {
     return 'Terlalu banyak percobaan. Tunggu sebentar lalu coba lagi.';
   }

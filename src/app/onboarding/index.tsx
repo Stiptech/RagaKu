@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -85,18 +85,6 @@ export default function OnboardingIntroScreen() {
               label="MULAI PERJALANAN KEBUGARAN →"
               onPress={() => router.push('/onboarding/biometric')}
             />
-
-            <Pressable
-              hitSlop={8}
-              style={styles.loginRow}
-              onPress={() => router.replace('/login')}>
-              <ThemedText type="default" themeColor="textSecondary">
-                Sudah punya akun?{' '}
-              </ThemedText>
-              <ThemedText type="default" themeColor="primary" style={styles.loginLink}>
-                Masuk
-              </ThemedText>
-            </Pressable>
 
             <View style={styles.trustRow}>
               <Ionicons name="lock-closed" size={12} color={theme.textSecondary} />
@@ -213,13 +201,6 @@ const styles = StyleSheet.create({
   },
   footer: {
     gap: Spacing.three,
-  },
-  loginRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  loginLink: {
-    fontWeight: '700',
   },
   trustRow: {
     flexDirection: 'row',
