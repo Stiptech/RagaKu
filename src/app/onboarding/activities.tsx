@@ -19,6 +19,9 @@ import { SelectGridCard } from '@/components/ui/select-items';
 import { SliderTrack } from '@/components/ui/slider-track';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { saveUserProfileOnboarding } from '@/lib/profile';
+import { supabase } from '@/lib/supabase';
+import React, { useState } from 'react';
 
 const SPORT_OPTIONS: {
   value: Activity;
@@ -54,6 +57,25 @@ const DURATION_OPTIONS: { label: string; value: SessionDuration }[] = [
 export default function ActivitiesStep() {
   const theme = useTheme();
   const { data, update, toggleInList } = useOnboarding();
+  const [loading, setLoading] = useState(false);
+  const handleFinish = async () => {
+    try {
+      setLoading(true);
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('Pengguna tidak terautentikasi.');
+
+      // Persist to Supabase
+      await saveUserProfileOnboarding(user.id, data);
+
+      // Navigate to main app
+      router.replace('/');
+    } catch (err: any) {  
+      alert(`Gagal menyimpan profile: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const selectedSports = data.activities.filter((activity) =>
     SPORT_OPTIONS.some((option) => option.value === activity),
@@ -178,9 +200,9 @@ export default function ActivitiesStep() {
           </View>
 
           <PillButton
-            label="BUAT PROGRAM RAGAKU AI PERSONAL SAYA →"
-            disabled={selectedSports.length < 2}
-            onPress={() => router.replace('/workout')}
+            label={loading ? "MENYIMPAN PROFILE..." : "BUAT PROGRAM RAGAKU AI PERSONAL SAYA →"}
+            disabled={selectedSports.length < 2 || loading}
+            onPress={handleFinish}
           />
           <ThemedText type="small" themeColor="textSecondary" style={styles.footerNote}>
             ENKRIPSI BIOMETRIK & KEBUGARAN TERJAMIN

@@ -30,6 +30,9 @@ yarn-error.*
 .DS_Store
 *.pem
 
+# Documentation
+DOCUMENTATION_Jayden.md
+
 # Environment files
 .env
 .env.*

@@ -50,6 +50,7 @@ export interface OnboardingData {
   targetWeightKg: number;
   goals: Goal[];
   injuries: Injury[];
+  healthNotes: string[];
   gymMembership: boolean;
   equipment: Equipment[];
   activities: Activity[];
@@ -65,6 +66,7 @@ const defaultData: OnboardingData = {
   targetWeightKg: 68,
   goals: ['bentuk-otot'],
   injuries: [],
+  healthNotes: [],
   gymMembership: false,
   equipment: ['bodyweight'],
   activities: [],
