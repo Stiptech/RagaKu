@@ -12,6 +12,7 @@ import { PillButton } from '@/components/ui/pill-button';
 import { StatTile } from '@/components/ui/stat-tile';
 import { BottomTabInset, FontFamily, MaxContentWidth, OverlaySurface, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { supabase } from '@/lib/supabase';
 
 const TODAY_EXERCISES = [
   {
@@ -48,6 +49,18 @@ export default function WorkoutHomeScreen() {
   const theme = useTheme();
   const { data } = useOnboarding();
 
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (err) {
+      // Local session is cleared even if the network call fails, so still leave.
+      console.error('[workout] sign out failed:', err);
+    } finally {
+      router.replace('/login');
+    }
+  };
+
   const hasKneeInjury = data.injuries.includes('lutut');
   const recommendation = hasKneeInjury
     ? 'Pemulihan otot prima. Variasi gerakan hari ini dirancang ramah sendi lutut kanan sesuai catatan riwayat latihan kemarin.'
@@ -72,6 +85,14 @@ export default function WorkoutHomeScreen() {
               </Pressable>
               <Pressable style={[styles.iconButton, { borderColor: theme.border }]} hitSlop={8}>
                 <Ionicons name="person-outline" size={18} color={theme.text} />
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Keluar"
+                style={[styles.iconButton, { borderColor: theme.border }]}
+                hitSlop={8}
+                onPress={handleLogout}>
+                <Ionicons name="log-out-outline" size={18} color={theme.text} />
               </Pressable>
             </View>
           </View>
